@@ -34,8 +34,8 @@ import java.io.IOException;
 @Provider
 public class GeneralRestMetricsFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    private static final String METRICS_RATE_KEY = "pnc.rest.all.rate";
-    private static final String METRICS_TIMER_KEY = "pnc.rest.all.timer";
+    private static final String METRICS_RATE_KEY = "rest.all.rate";
+    private static final String METRICS_TIMER_KEY = "rest.all.timer";
 
     @Inject
     private MetricsConfiguration metricsConfiguration;

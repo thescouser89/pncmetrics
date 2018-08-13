@@ -42,7 +42,7 @@ import static com.codahale.metrics.MetricRegistry.name;
 @TimedMetric
 public class TimedMetricFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    private static final String METRICS_KEY = "pnc.rest";
+    private static final String METRICS_KEY = "rest";
     private static final String METRICS_RATE_KEY = ".rate";
     private static final String METRICS_TIMER_KEY = ".timer";
 
