@@ -24,6 +24,7 @@ To make sure pncmetrics properly report data, you need to set those environment 
 1. `metrics_graphite_server`: the Graphite server to send data
 2. `metrics_graphite_port`: the port the Graphite server is using (typically 2003)
 3. `metrics_graphite_prefix`: prefix to use on metrics reported to use as namespace (e.g <serverUrl>)
+4. `metrics_graphite_interval`: (Optional) interval in seconds to send data to Graphite (default: 60s)
 
 ## Usage
 
@@ -31,9 +32,9 @@ To make sure pncmetrics properly report data, you need to set those environment 
 
 Add the annotation `@TimedMetric` before the method defining a REST endpoint to get time data about the endpoint.
 
-The data will be reported to Graphite as '<key>.rest.<RestClass>.<methodName>.rate' and '<key>.rest.<RestClass>.<methodName>.timer'
+The data will be reported to Graphite as '<prefix>.rest.<RestClass>.<methodName>.rate' and '<key>.rest.<RestClass>.<methodName>.timer'
 
-Once pncmetrics is properly configured, it will also by default track the time and usage of all the REST endpoints into 2 metrics: '<key>.rest.all.rate' and '<key>.rest.all.timer'
+Once pncmetrics is properly configured, it will also by default track the time and usage of all the REST endpoints into 2 metrics: '<prefix>.rest.all.rate' and '<key>.rest.all.timer'
 
 
 ### Profile anything else
