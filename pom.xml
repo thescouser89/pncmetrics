@@ -53,7 +53,7 @@
     </distributionManagement>
 
     <properties>
-        <version.dropwizard>4.0.2</version.dropwizard>
+        <version.dropwizard>4.0.5</version.dropwizard>
     </properties>
     <dependencies>
         <!-- EJB spec -->
