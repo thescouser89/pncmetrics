@@ -42,26 +42,30 @@ public class MetricsConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricsConfiguration.class);
 
-    private static final String METRIC_JVM_MEMORY = "jvm.memory";
-    private static final String METRIC_JVM_GARBAGE = "jvm.garbage";
-    private static final String METRIC_JVM_THREADS = "jvm.threads";
-    private static final String METRIC_JVM_CLASSLOADING = "jvm.classloading";
+    public static final String METRIC_JVM_MEMORY = "jvm.memory";
+    public static final String METRIC_JVM_GARBAGE = "jvm.garbage";
+    public static final String METRIC_JVM_THREADS = "jvm.threads";
+    public static final String METRIC_JVM_CLASSLOADING = "jvm.classloading";
 
-    private static final String  GRAPHITE_SERVER_KEY = "metrics_graphite_server";
-    private static final String  GRAPHITE_PORT_KEY = "metrics_graphite_port";
-    private static final String  GRAPHITE_PREFIX_KEY = "metrics_graphite_prefix";
+    public static final String  GRAPHITE_SERVER_KEY = "metrics_graphite_server";
+    public static final String  GRAPHITE_PORT_KEY = "metrics_graphite_port";
+    public static final String  GRAPHITE_PREFIX_KEY = "metrics_graphite_prefix";
 
     // The interval is in seconds
-    private static final String  GRAPHITE_INTERVAL_KEY = "metrics_graphite_interval";
-    private static final int DEFAULT_GRAPHITE_INTERVAL = 60;
+    public static final String  GRAPHITE_INTERVAL_KEY = "metrics_graphite_interval";
+    public static final int DEFAULT_GRAPHITE_INTERVAL = 60;
 
     @Getter
     private MetricRegistry metricRegistry;
+
+    @Getter
+    private GaugeMetric gaugeMetric;
 
     @PostConstruct
     public void init() {
 
         metricRegistry = new MetricRegistry();
+        gaugeMetric = new GaugeMetric(metricRegistry);
 
         monitorJvmMetrics();
         setupGraphiteReporter();
@@ -79,7 +83,7 @@ public class MetricsConfiguration {
      * @return value from property, or throws NoPropertyException if property not specified
      * @throws NoPropertyException if property not specified on system or env value
      */
-    private String getValueFromProperty(String propertyName, String description) throws NoPropertyException {
+    public String getValueFromProperty(String propertyName, String description) throws NoPropertyException {
 
         String value;
 
