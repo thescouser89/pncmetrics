@@ -25,6 +25,10 @@ import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+
+import io.github.mweirauch.metrics.jvm.extras.FileDescriptorCountGauge;
+import io.github.mweirauch.metrics.jvm.extras.ProcessMemoryUsageGaugeSet;
+import io.github.mweirauch.metrics.jvm.extras.UptimeGauge;
 import lombok.Getter;
 import org.jboss.pnc.pncmetrics.exceptions.NoPropertyException;
 import org.slf4j.Logger;
@@ -47,16 +51,26 @@ public class MetricsConfiguration {
     public static final String METRIC_JVM_THREADS = "jvm.threads";
     public static final String METRIC_JVM_CLASSLOADING = "jvm.classloading";
 
-    public static final String  GRAPHITE_SERVER_KEY = "metrics_graphite_server";
-    public static final String  GRAPHITE_PORT_KEY = "metrics_graphite_port";
-    public static final String  GRAPHITE_PREFIX_KEY = "metrics_graphite_prefix";
+    public static final String METRIC_JVM_PROCESS_MEMORY = "jvm.process.mem";
+    public static final String METRIC_JVM_PROCESS_FDS_COUNT = "jvm.process.fds.count";
+    public static final String METRIC_JVM_PROCESS_UPTIME = "jvm.process.uptime";
+
+    public static final String GRAPHITE_SERVER_KEY = "metrics_graphite_server";
+    public static final String GRAPHITE_PORT_KEY = "metrics_graphite_port";
+    public static final String GRAPHITE_PREFIX_KEY = "metrics_graphite_prefix";
 
     // The interval is in seconds
-    public static final String  GRAPHITE_INTERVAL_KEY = "metrics_graphite_interval";
+    public static final String GRAPHITE_INTERVAL_KEY = "metrics_graphite_interval";
+    public static final String GRAPHITE_PROCESS_INTERVAL_KEY = "metrics_graphite_process_interval";
+
     public static final int DEFAULT_GRAPHITE_INTERVAL = 60;
+    public static final int DEFAULT_GRAPHITE_PROCESS_INTERVAL = 15;
 
     @Getter
     private MetricRegistry metricRegistry;
+
+    @Getter
+    private MetricRegistry processMetricRegistry;
 
     @Getter
     private GaugeMetric gaugeMetric;
@@ -67,19 +81,22 @@ public class MetricsConfiguration {
         metricRegistry = new MetricRegistry();
         gaugeMetric = new GaugeMetric(metricRegistry);
 
+        processMetricRegistry = new MetricRegistry();
+
         monitorJvmMetrics();
-        setupGraphiteReporter();
+        monitorJvmProcessMetrics();
+        setupGraphiteReporters();
 
     }
 
     /**
-     * If propertyName has no value (either specified in system property or environment property), then just return
-     * the default value. System property value has priority over environment property value.
+     * If propertyName has no value (either specified in system property or environment property), then just return the default
+     * value. System property value has priority over environment property value.
      * <p>
      * If value can't be parsed, just return the default value.
      *
      * @param propertyName property name to check the value
-     * @param description  description to print in case value can't be parsed as an integer
+     * @param description description to print in case value can't be parsed as an integer
      * @return value from property, or throws NoPropertyException if property not specified
      * @throws NoPropertyException if property not specified on system or env value
      */
@@ -103,7 +120,6 @@ public class MetricsConfiguration {
         return value;
     }
 
-
     /**
      * Add metrics for JVM. Already provided by metrics-jvm
      */
@@ -115,7 +131,18 @@ public class MetricsConfiguration {
         metricRegistry.register(METRIC_JVM_MEMORY, new MemoryUsageGaugeSet());
         metricRegistry.register(METRIC_JVM_THREADS, new ThreadStatesGaugeSet());
         metricRegistry.register(METRIC_JVM_CLASSLOADING, new ClassLoadingGaugeSet());
+    }
 
+    /**
+     * Add metrics for JVM processes. Additional metrics complementing metrics-jvm
+     */
+    private void monitorJvmProcessMetrics() {
+
+        logger.info("Registering JVM process metrics");
+
+        processMetricRegistry.register(METRIC_JVM_PROCESS_MEMORY, new ProcessMemoryUsageGaugeSet());
+        processMetricRegistry.register(METRIC_JVM_PROCESS_FDS_COUNT, new FileDescriptorCountGauge());
+        processMetricRegistry.register(METRIC_JVM_PROCESS_UPTIME, new UptimeGauge());
     }
 
     /**
@@ -124,21 +151,37 @@ public class MetricsConfiguration {
      * If any of the required variables are not specified, abandon the setup and warn the user.
      *
      */
-    private void setupGraphiteReporter() {
+    private void setupGraphiteReporters() {
 
         int graphiteInterval = DEFAULT_GRAPHITE_INTERVAL;
+        int graphiteProcessInterval = DEFAULT_GRAPHITE_PROCESS_INTERVAL;
 
         try {
 
-            graphiteInterval = Integer.parseInt(
-                    getValueFromProperty(GRAPHITE_INTERVAL_KEY, "Graphite Interval reporting"));
+            graphiteInterval = Integer.parseInt(getValueFromProperty(GRAPHITE_INTERVAL_KEY, "Graphite Interval reporting"));
 
         } catch (NumberFormatException e) {
 
             // thrown because we couldn't parse the interval as a number
-            logger.warn("Could not parse Graphite interval! Using default value of {} seconds instead", DEFAULT_GRAPHITE_INTERVAL);
+            logger.warn("Could not parse Graphite interval! Using default value of {} seconds instead",
+                    DEFAULT_GRAPHITE_INTERVAL);
 
-        } catch(NoPropertyException e) {
+        } catch (NoPropertyException e) {
+            // If we're here that property is not specified. Just continue using the default
+        }
+
+        try {
+
+            graphiteProcessInterval = Integer
+                    .parseInt(getValueFromProperty(GRAPHITE_PROCESS_INTERVAL_KEY, "Graphite Process Interval reporting"));
+
+        } catch (NumberFormatException e) {
+
+            // thrown because we couldn't parse the interval as a number
+            logger.warn("Could not parse Graphite process interval! Using default value of {} seconds instead",
+                    DEFAULT_GRAPHITE_PROCESS_INTERVAL);
+
+        } catch (NoPropertyException e) {
             // If we're here that property is not specified. Just continue using the default
         }
 
@@ -148,7 +191,8 @@ public class MetricsConfiguration {
             int graphitePort = Integer.parseInt(getValueFromProperty(GRAPHITE_PORT_KEY, "Graphite Port"));
             String graphitePrefix = getValueFromProperty(GRAPHITE_PREFIX_KEY, "Graphite Prefix");
 
-            startGraphiteReporter(graphiteServer, graphitePort, graphitePrefix, graphiteInterval);
+            startGraphiteReporter(metricRegistry, graphiteServer, graphitePort, graphitePrefix, graphiteInterval);
+            startGraphiteReporter(processMetricRegistry, graphiteServer, graphitePort, graphitePrefix, graphiteProcessInterval);
 
         } catch (NumberFormatException e) {
 
@@ -165,24 +209,21 @@ public class MetricsConfiguration {
     /**
      * Reporter of metrics to a Graphite server
      *
-     * @param host   Graphite server
-     * @param port   Graphite port (usually 2003)
+     * @param host Graphite server
+     * @param port Graphite port (usually 2003)
      * @param prefix Prefix to use as a namespace for our logs
      * @param interval interval at which to report metrics to Graphite in seconds
      */
-    private void startGraphiteReporter(String host, int port, String prefix, int interval) {
+    private void startGraphiteReporter(MetricRegistry registry, String host, int port, String prefix, int interval) {
 
         logger.info("Setting up Graphite reporter");
 
         Graphite graphite = new Graphite(new InetSocketAddress(host, port));
 
-        GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry)
-                .prefixedWith(prefix)
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .filter(MetricFilter.ALL)
-                .build(graphite);
+        GraphiteReporter reporter = GraphiteReporter.forRegistry(registry).prefixedWith(prefix).convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS).filter(MetricFilter.ALL).build(graphite);
 
         reporter.start(interval, TimeUnit.SECONDS);
     }
+
 }

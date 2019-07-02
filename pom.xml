@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -53,7 +53,7 @@
     </distributionManagement>
 
     <properties>
-        <version.dropwizard>4.0.5</version.dropwizard>
+        <version.dropwizard>4.1.0</version.dropwizard>
     </properties>
     <dependencies>
         <!-- EJB spec -->
@@ -124,6 +124,13 @@
             <artifactId>mockito-core</artifactId>
             <version>2.25.1</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Additional metrics complementing Dropwizards metrics-jvm  -->
+        <dependency>
+            <groupId>io.github.mweirauch</groupId>
+            <artifactId>metrics-jvm-extras</artifactId>
+            <version>0.1.4</version>
         </dependency>
     </dependencies>
     <build>
