@@ -36,6 +36,7 @@ public class GeneralRestMetricsFilter implements ContainerRequestFilter, Contain
 
     private static final String METRICS_RATE_KEY = "rest.all.rate";
     private static final String METRICS_TIMER_KEY = "rest.all.timer";
+    private static final String METRICS_ERROR_KEY = "rest.all.errors";
 
     @Inject
     private MetricsConfiguration metricsConfiguration;
@@ -61,10 +62,16 @@ public class GeneralRestMetricsFilter implements ContainerRequestFilter, Contain
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 
         Timer.Context tc = (Timer.Context) servletRequest.getAttribute("timer.context");
-
         if (tc != null) {
             tc.stop();
             servletRequest.removeAttribute("timer.context");
+        }
+
+        if (responseContext.getStatus() > 499) {
+            MetricRegistry registry = metricsConfiguration.getMetricRegistry();
+
+            Meter errors = registry.meter(METRICS_ERROR_KEY);
+            errors.mark();
         }
     }
 }
