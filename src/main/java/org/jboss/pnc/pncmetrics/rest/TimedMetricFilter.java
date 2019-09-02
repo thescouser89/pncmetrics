@@ -45,6 +45,7 @@ public class TimedMetricFilter implements ContainerRequestFilter, ContainerRespo
     private static final String METRICS_KEY = "rest";
     private static final String METRICS_RATE_KEY = ".rate";
     private static final String METRICS_TIMER_KEY = ".timer";
+    private static final String METRICS_ERROR_KEY = ".errors";
 
     @Context
     private ResourceInfo resourceInfo;
@@ -55,14 +56,13 @@ public class TimedMetricFilter implements ContainerRequestFilter, ContainerRespo
     @Inject
     private HttpServletRequest servletRequest;
 
-
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 
         MetricRegistry registry = metricsConfiguration.getMetricRegistry();
 
-        String metricsName = METRICS_KEY +
-                name(resourceInfo.getResourceClass().getSimpleName(), resourceInfo.getResourceMethod().getName());
+        String metricsName = METRICS_KEY
+                + name(resourceInfo.getResourceClass().getSimpleName(), resourceInfo.getResourceMethod().getName());
 
         Timer timer = registry.timer(metricsName + METRICS_TIMER_KEY);
         Meter meter = registry.meter(metricsName + METRICS_RATE_KEY);
@@ -71,7 +71,6 @@ public class TimedMetricFilter implements ContainerRequestFilter, ContainerRespo
         meter.mark();
 
         servletRequest.setAttribute("timer.context.method", counter);
-
     }
 
     @Override
@@ -82,6 +81,16 @@ public class TimedMetricFilter implements ContainerRequestFilter, ContainerRespo
         if (tc != null) {
             tc.stop();
             servletRequest.removeAttribute("timer.context.method");
+        }
+
+        if (responseContext.getStatus() > 499) {
+            MetricRegistry registry = metricsConfiguration.getMetricRegistry();
+
+            String metricsName = METRICS_KEY
+                    + name(resourceInfo.getResourceClass().getSimpleName(), resourceInfo.getResourceMethod().getName());
+
+            Meter errors = registry.meter(metricsName + METRICS_ERROR_KEY);
+            errors.mark();
         }
     }
 }
