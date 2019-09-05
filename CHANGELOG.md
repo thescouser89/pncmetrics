@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+## 1.1.3 - 2019-09-04
+### Added
+- Error metrics to TimedMetricFilter
+
 ## 1.1.0 - 2019-03-26
 ### Changed
 
