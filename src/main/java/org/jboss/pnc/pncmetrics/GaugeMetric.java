@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * Class to help deal with Gauge Metrics, which is an instantaneous measurement of a value
  * <p>
- * When the metric is incremented via 'incrementMetric', it is stored in a map. When the metric gets sent
- * to the Graphite server, we send the data and reset the metric to null, until 'incrementMetric' is called again.
+ * When the metric is incremented via 'incrementMetric', it is stored in a map. When the metric gets sent to the Graphite
+ * server, we send the data and reset the metric to null, until 'incrementMetric' is called again.
  * <p>
  * This allows us to only send data to Graphite when incrementMetric is called.
  */
