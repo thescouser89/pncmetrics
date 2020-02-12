@@ -164,7 +164,7 @@ public class MetricsConfiguration {
 
             // thrown because we couldn't parse the interval as a number
             logger.warn("Could not parse Graphite interval! Using default value of {} seconds instead",
-                    DEFAULT_GRAPHITE_INTERVAL);
+                        DEFAULT_GRAPHITE_INTERVAL);
 
         } catch (NoPropertyException e) {
             // If we're here that property is not specified. Just continue using the default
@@ -172,14 +172,14 @@ public class MetricsConfiguration {
 
         try {
 
-            graphiteProcessInterval = Integer
-                    .parseInt(getValueFromProperty(GRAPHITE_PROCESS_INTERVAL_KEY, "Graphite Process Interval reporting"));
+            graphiteProcessInterval = Integer.parseInt(getValueFromProperty(GRAPHITE_PROCESS_INTERVAL_KEY,
+                                                                            "Graphite Process Interval reporting"));
 
         } catch (NumberFormatException e) {
 
             // thrown because we couldn't parse the interval as a number
             logger.warn("Could not parse Graphite process interval! Using default value of {} seconds instead",
-                    DEFAULT_GRAPHITE_PROCESS_INTERVAL);
+                        DEFAULT_GRAPHITE_PROCESS_INTERVAL);
 
         } catch (NoPropertyException e) {
             // If we're here that property is not specified. Just continue using the default
@@ -220,8 +220,12 @@ public class MetricsConfiguration {
 
         Graphite graphite = new Graphite(new InetSocketAddress(host, port));
 
-        GraphiteReporter reporter = GraphiteReporter.forRegistry(registry).prefixedWith(prefix).convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS).filter(MetricFilter.ALL).build(graphite);
+        GraphiteReporter reporter = GraphiteReporter.forRegistry(registry)
+                                                    .prefixedWith(prefix)
+                                                    .convertRatesTo(TimeUnit.SECONDS)
+                                                    .convertDurationsTo(TimeUnit.MILLISECONDS)
+                                                    .filter(MetricFilter.ALL)
+                                                    .build(graphite);
 
         reporter.start(interval, TimeUnit.SECONDS);
     }
