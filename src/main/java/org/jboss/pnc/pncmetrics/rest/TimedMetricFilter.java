@@ -74,7 +74,8 @@ public class TimedMetricFilter implements ContainerRequestFilter, ContainerRespo
     }
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
+            throws IOException {
 
         Timer.Context tc = (Timer.Context) servletRequest.getAttribute("timer.context.method");
 
