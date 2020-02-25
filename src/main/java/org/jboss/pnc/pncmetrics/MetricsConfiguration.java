@@ -90,8 +90,8 @@ public class MetricsConfiguration {
     }
 
     /**
-     * If propertyName has no value (either specified in system property or environment property), then just return the default
-     * value. System property value has priority over environment property value.
+     * If propertyName has no value (either specified in system property or environment property), then just return the
+     * default value. System property value has priority over environment property value.
      * <p>
      * If value can't be parsed, just return the default value.
      *
