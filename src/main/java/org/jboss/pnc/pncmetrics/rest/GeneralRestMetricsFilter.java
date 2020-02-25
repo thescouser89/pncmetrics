@@ -59,7 +59,8 @@ public class GeneralRestMetricsFilter implements ContainerRequestFilter, Contain
     }
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
+            throws IOException {
 
         Timer.Context tc = (Timer.Context) servletRequest.getAttribute("timer.context");
         if (tc != null) {
