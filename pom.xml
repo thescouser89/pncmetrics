@@ -25,6 +25,16 @@
         </license>
     </licenses>
 
+    <repositories>
+        <repository>
+            <id>Nexus Staging</id>
+            <url>https://oss.sonatype.org/content/groups/staging</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <developers>
         <developer>
             <organization>RedHat</organization>
