@@ -1,4 +1,5 @@
 # pncmetrics: Add metrics to your Jakarta EE projects!
+test
 
 The metrics collected are sent to a Graphite server every minute. pncmetrics is currently only tested to work on Jakarta EE 8 projects.
 
