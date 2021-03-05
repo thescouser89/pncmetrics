@@ -20,7 +20,7 @@ package org.jboss.pnc.pncmetrics.rest;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.jboss.pnc.pncmetrics.MetricsConfiguration;
+import org.jboss.pnc.pncmetrics.MetricsCDIConfiguration;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class GeneralRestMetricsFilter implements ContainerRequestFilter, Contain
     private static final String METRICS_ERROR_KEY = "rest.all.errors";
 
     @Inject
-    private MetricsConfiguration metricsConfiguration;
+    private MetricsCDIConfiguration metricsConfiguration;
 
     @Inject
     private HttpServletRequest servletRequest;
