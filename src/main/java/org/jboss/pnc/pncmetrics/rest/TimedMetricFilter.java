@@ -20,7 +20,7 @@ package org.jboss.pnc.pncmetrics.rest;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.jboss.pnc.pncmetrics.MetricsConfiguration;
+import org.jboss.pnc.pncmetrics.MetricsCDIConfiguration;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -51,7 +51,7 @@ public class TimedMetricFilter implements ContainerRequestFilter, ContainerRespo
     private ResourceInfo resourceInfo;
 
     @Inject
-    private MetricsConfiguration metricsConfiguration;
+    private MetricsCDIConfiguration metricsConfiguration;
 
     @Inject
     private HttpServletRequest servletRequest;
