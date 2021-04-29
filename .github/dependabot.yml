@@ -1,0 +1,9 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+    timezone: America/New_York
+  open-pull-requests-limit: 10
