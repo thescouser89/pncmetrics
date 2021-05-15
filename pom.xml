@@ -61,7 +61,7 @@
     </distributionManagement>
 
     <properties>
-        <version.dropwizard>4.1.21</version.dropwizard>
+        <version.dropwizard>4.2.0</version.dropwizard>
         <tagSuffix />
     </properties>
     <dependencies>
