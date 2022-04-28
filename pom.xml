@@ -10,7 +10,7 @@
 
     <groupId>org.jboss.pnc.metrics</groupId>
     <artifactId>pncmetrics</artifactId>
-    <version>1.1.12-SNAPSHOT</version>
+    <version>1.1.12</version>
     <packaging>jar</packaging>
 
     <description>Java EE project for Metrics</description>
@@ -46,7 +46,7 @@
         <connection>scm:git:https://github.com/project-ncl/pncmetrics.git</connection>
         <developerConnection>scm:git:git@github.com:project-ncl/pncmetrics.git</developerConnection>
         <url>https://github.com/project-ncl/pncmetrics/</url>
-        <tag>HEAD</tag>
+        <tag>1.1.12</tag>
     </scm>
 
     <distributionManagement>
