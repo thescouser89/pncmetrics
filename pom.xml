@@ -64,6 +64,21 @@
         <version.dropwizard>4.2.39</version.dropwizard>
         <tagSuffix />
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                override amqp-client coming from metrics-graphite
+                TODO: remove override when CVE fixed or migrated to metrics-graphite v5
+            -->
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>5.32.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- EJB spec -->
         <dependency>
